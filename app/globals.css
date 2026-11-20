@@ -7,6 +7,36 @@
   --foreground: #0f172a;
 }
 
+@keyframes shine {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.animate-shine {
+  animation: shine 5s linear infinite;
+}
+
+/* React Bits Pro 3D Letter Swap */
+.group-letter-swap-top {
+  transform: rotateX(90deg) !important;
+}
+
+.group-letter-swap-bottom {
+  transform: rotateX(-90deg) !important;
+}
+
+.group-letter-swap-left {
+  transform: rotateY(90deg) !important;
+}
+
+.group-letter-swap-right {
+  transform: rotateY(-90deg) !important;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);

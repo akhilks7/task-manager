@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { useFormState } from "react-dom";
 import { loginAction, type LoginActionState } from "./actions";
-import { Lock, Mail, AlertCircle, ArrowRight, FileCheck2 } from "lucide-react";
+import { Lock, Mail, AlertCircle, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Letter3DSwap } from "@/components/ui/letter-3d-swap";
 
 export function LoginForm({ initialError }: { initialError?: string }) {
   const [state, formAction] = useFormState<LoginActionState | null, FormData>(
@@ -11,6 +12,7 @@ export function LoginForm({ initialError }: { initialError?: string }) {
     null
   );
   const [isPending, startTransition] = useTransition();
+  const [showPassword, setShowPassword] = useState(false);
 
   const errorMessage =
     state?.error ||
@@ -28,21 +30,21 @@ export function LoginForm({ initialError }: { initialError?: string }) {
       className="space-y-5"
     >
       {errorMessage && (
-        <div className="p-3.5 rounded-lg bg-rose-50 border border-rose-200 flex items-start space-x-2.5 text-rose-700 text-sm">
+        <div className="p-3.5 rounded-xl bg-rose-50/90 border border-rose-200/80 flex items-start space-x-2.5 text-rose-700 text-sm shadow-xs animate-in fade-in-50 duration-200">
           <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-500 mt-0.5" />
-          <p>{errorMessage}</p>
+          <p className="font-medium text-xs sm:text-sm">{errorMessage}</p>
         </div>
       )}
 
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-slate-700 mb-1.5"
+          className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5"
         >
           Email address
         </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-600 transition-colors">
             <Mail className="w-4 h-4" />
           </div>
           <input
@@ -52,39 +54,53 @@ export function LoginForm({ initialError }: { initialError?: string }) {
             autoComplete="email"
             required
             placeholder="name@company.com"
-            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+            className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200/90 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-xs"
           />
         </div>
         {state?.fieldErrors?.email && (
-          <p className="mt-1.5 text-xs text-rose-600">
+          <p className="mt-1.5 text-xs font-medium text-rose-600">
             {state.fieldErrors.email[0]}
           </p>
         )}
       </div>
 
       <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-slate-700 mb-1.5"
-        >
-          Password
-        </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+        <div className="flex items-center justify-between mb-1.5">
+          <label
+            htmlFor="password"
+            className="block text-xs font-semibold uppercase tracking-wider text-slate-600"
+          >
+            Password
+          </label>
+        </div>
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-600 transition-colors">
             <Lock className="w-4 h-4" />
           </div>
           <input
             id="password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             required
             placeholder="••••••••"
-            className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+            className="w-full pl-10 pr-10 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200/90 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-xs"
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
+          </button>
         </div>
         {state?.fieldErrors?.password && (
-          <p className="mt-1.5 text-xs text-rose-600">
+          <p className="mt-1.5 text-xs font-medium text-rose-600">
             {state.fieldErrors.password[0]}
           </p>
         )}
@@ -93,7 +109,7 @@ export function LoginForm({ initialError }: { initialError?: string }) {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full mt-2 flex items-center justify-center py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all disabled:opacity-60"
+        className="w-full mt-3 group flex items-center justify-center py-2.5 px-4 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-medium text-sm rounded-xl shadow-md shadow-indigo-600/20 hover:shadow-lg hover:shadow-indigo-600/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
       >
         {isPending ? (
           <span className="inline-flex items-center">
@@ -116,18 +132,25 @@ export function LoginForm({ initialError }: { initialError?: string }) {
                 d="M4 12a8 8 0 018-8v8H4z"
               />
             </svg>
-            Signing in...
+            Authenticating...
           </span>
         ) : (
-          <span className="inline-flex items-center">
-            Sign In
-            <ArrowRight className="w-4 h-4 ml-1.5" />
+          <span className="inline-flex items-center font-medium">
+            <Letter3DSwap
+              rotateDirection="top"
+              staggerDuration={0.018}
+              frontFaceClassName="text-white"
+              secondFaceClassName="text-indigo-200"
+            >
+              Sign In to Dashboard
+            </Letter3DSwap>
+            <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
           </span>
         )}
       </button>
 
-      <div className="pt-3 text-center">
-        <p className="text-xs text-slate-500">
+      <div className="pt-2 text-center">
+        <p className="text-xs text-slate-400 leading-relaxed">
           Accounts are provisioned by company administration.
         </p>
       </div>
